@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TaskCraft is a premium vanilla web-based list and task manager featuring dark mode, glassmorphism, offline persistence, and synthesized soundscapes.">
+    <title>TaskCraft - Premium List & Task Manager</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="appSidebar">
+            <div class="sidebar-header">
+                <div class="logo-area">
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                    <span class="logo-text">TaskCraft</span>
+                </div>
+            </div>
+
+            <!-- Smart Lists -->
+            <nav class="sidebar-section">
+                <h3 class="section-title">Focus</h3>
+                <ul class="list-group" id="smartLists">
+                    <li class="list-item active" data-list-id="all">
+                        <span class="list-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>
+                        </span>
+                        <span class="list-name">All Tasks</span>
+                        <span class="list-badge badge-all" id="badge-all">0</span>
+                    </li>
+                    <li class="list-item" data-list-id="today">
+                        <span class="list-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+                        </span>
+                        <span class="list-name">Today</span>
+                        <span class="list-badge badge-today" id="badge-today">0</span>
+                    </li>
+                    <li class="list-item" data-list-id="upcoming">
+                        <span class="list-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </span>
+                        <span class="list-name">Upcoming</span>
+                        <span class="list-badge badge-upcoming" id="badge-upcoming">0</span>
+                    </li>
+                    <li class="list-item" data-list-id="overdue">
+                        <span class="list-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        </span>
+                        <span class="list-name text-danger">Overdue</span>
+                        <span class="list-badge badge-overdue bg-danger" id="badge-overdue">0</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Custom User Lists -->
+            <nav class="sidebar-section">
+                <div class="section-header-row">
+                    <h3 class="section-title">My Lists</h3>
+                    <button class="btn-icon-sm" id="btnOpenNewListModal" title="Create New List">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+                <ul class="list-group" id="customListsContainer">
+                    <!-- Dynamic user lists will be injected here -->
+                </ul>
+            </nav>
+
+            <!-- Productivity Stats Widget -->
+            <div class="sidebar-widget stats-widget">
+                <h4 class="widget-title">Task Completion</h4>
+                <div class="radial-progress-container">
+                    <svg class="radial-ring" width="100" height="100" viewBox="0 0 100 100">
+                        <circle class="radial-ring-bg" cx="50" cy="50" r="40" stroke-width="8"></circle>
+                        <circle class="radial-ring-fill" id="completionRing" cx="50" cy="50" r="40" stroke-width="8" stroke-dasharray="251.2" stroke-dashoffset="251.2"></circle>
+                    </svg>
+                    <div class="radial-text" id="completionRateText">0%</div>
+                </div>
+                <div class="widget-details">
+                    <div class="widget-detail-item">
+                        <span class="detail-label">Streak</span>
+                        <span class="detail-val" id="streakText">0 days 🔥</span>
+                    </div>
+                    <div class="widget-detail-item">
+                        <span class="detail-label">Done Today</span>
+                        <span class="detail-val" id="doneCountText">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer Controls -->
+            <div class="sidebar-footer">
+                <button class="btn-footer-control" id="btnToggleSound" title="Toggle Sound Engine">
+                    <span class="control-icon" id="soundIcon">
+                        <!-- Volume Up SVG -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                    </span>
+                    <span class="control-label" id="soundLabel">Sounds: ON</span>
+                </button>
+                <button class="btn-footer-control" id="btnOpenHelpModal" title="Keyboard Shortcut Help">
+                    <span class="control-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </span>
+                    <span class="control-label">Help Guide</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Task Workspace -->
+        <main class="app-workspace">
+            <!-- Top Search & Quick Action Bar -->
+            <header class="workspace-header">
+                <div class="search-bar">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="taskSearchInput" placeholder="Search tasks by title, description or tag... (Ctrl + F)">
+                    <button class="btn-clear-search" id="btnClearSearch" style="display: none;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+                <div class="date-widget">
+                    <span id="currentDateText">Saturday, June 20, 2026</span>
+                </div>
+            </header>
+
+            <!-- Dashboard / Active Area Overview -->
+            <section class="workspace-dashboard">
+                <div class="list-meta-info">
+                    <h1 class="list-title" id="activeListTitle">All Tasks</h1>
+                    <p class="list-subtitle" id="activeListSubtitle">Organize and execute your agenda.</p>
+                </div>
+                <div class="list-actions-row">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All</button>
+                        <button class="filter-tab" data-filter="active">Active</button>
+                        <button class="filter-tab" data-filter="completed">Completed</button>
+                    </div>
+
+                    <div class="sorting-selector">
+                        <label for="taskSortSelect" class="sort-label">Sort by:</label>
+                        <select id="taskSortSelect" class="select-premium">
+                            <option value="dueDateAsc">Due Date (Soonest)</option>
+                            <option value="dueDateDesc">Due Date (Latest)</option>
+                            <option value="priorityDesc">Priority (High to Low)</option>
+                            <option value="priorityAsc">Priority (Low to High)</option>
+                            <option value="alphabetical">Alphabetical</option>
+                            <option value="createdDesc">Newest Created</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary" id="btnOpenNewTaskModal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        <span>Add Task</span>
+                    </button>
+                </div>
+
+                <!-- Progress Bar for Active List -->
+                <div class="list-progress-wrapper" id="listProgressWrapper">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="listProgressBarFill" style="width: 0%;"></div>
+                    </div>
+                    <span class="progress-bar-text" id="listProgressText">0% tasks completed</span>
+                </div>
+            </section>
+
+            <!-- Task List Workspace Container -->
+            <section class="tasks-container">
+                <!-- Active Tasks -->
+                <div class="task-list-section">
+                    <ul class="task-list" id="activeTasksList">
+                        <!-- Dynamic active task cards injected here -->
+                    </ul>
+                </div>
+
+                <!-- Completed Tasks (Collapsible) -->
+                <div class="task-list-section completed-section" id="completedTasksSection" style="display: none;">
+                    <button class="btn-section-toggle" id="btnToggleCompletedSection">
+                        <span class="toggle-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                        </span>
+                        <span class="toggle-title" id="completedSectionTitle">Completed Tasks (0)</span>
+                    </button>
+                    <ul class="task-list collapsed" id="completedTasksList">
+                        <!-- Dynamic completed task cards injected here -->
+                    </ul>
+                </div>
+
+                <!-- Empty State Container -->
+                <div class="empty-state-container" id="emptyStateContainer">
+                    <div class="empty-state-illustration">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state-title">No tasks found</h3>
+                    <p class="empty-state-subtitle">Get started by creating a list or adding a new task!</p>
+                    <button class="btn-outline" id="btnEmptyStateCreate">Create First Task</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals & Overlay Containers -->
+    <div class="modal-overlay" id="modalOverlay">
+        <!-- New Task / Edit Task Modal -->
+        <div class="modal-container task-modal" id="taskModal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="taskModalTitle">Create New Task</h2>
+                <button class="btn-icon-close" id="btnCloseTaskModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <form class="modal-body" id="taskForm" autocomplete="off">
+                <input type="hidden" id="editTaskId" value="">
+                
+                <div class="form-group">
+                    <label for="taskTitle" class="form-label">Task Name <span class="required">*</span></label>
+                    <input type="text" id="taskTitle" class="input-premium" placeholder="e.g., Finalize project slide decks" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDesc" class="form-label">Description</label>
+                    <textarea id="taskDesc" class="textarea-premium" rows="3" placeholder="Describe key details or reminders..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="taskDueDate" class="form-label">Due Date</label>
+                        <input type="date" id="taskDueDate" class="input-premium">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="taskDueTime" class="form-label">Due Time</label>
+                        <input type="time" id="taskDueTime" class="input-premium">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="taskCategorySelect" class="form-label">Assign to List</label>
+                        <select id="taskCategorySelect" class="select-premium">
+                            <!-- Injected dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label class="form-label">Priority Level</label>
+                        <div class="priority-radio-group">
+                            <label class="priority-radio-option low">
+                                <input type="radio" name="taskPriority" value="low" checked>
+                                <span class="radio-custom-label">Low</span>
+                            </label>
+                            <label class="priority-radio-option medium">
+                                <input type="radio" name="taskPriority" value="medium">
+                                <span class="radio-custom-label">Medium</span>
+                            </label>
+                            <label class="priority-radio-option high">
+                                <input type="radio" name="taskPriority" value="high">
+                                <span class="radio-custom-label">High</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subtasks Creator Section -->
+                <div class="form-group subtasks-section">
+                    <label class="form-label">Subtasks / Checklist</label>
+                    <div class="subtask-creator-row">
+                        <input type="text" id="newSubtaskInput" class="input-premium input-sm" placeholder="Add subtask details...">
+                        <button type="button" class="btn-primary btn-sm" id="btnAddSubtask">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                    </div>
+                    <ul class="subtask-creation-list" id="subtaskCreationList">
+                        <!-- Subtasks listed with delete buttons -->
+                    </ul>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="btnCancelTaskModal">Cancel</button>
+                    <button type="submit" class="btn-primary" id="btnSaveTask">Save Task</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Custom List Creation Modal -->
+        <div class="modal-container list-modal" id="listModal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="listModalTitle">New List</h2>
+                <button class="btn-icon-close" id="btnCloseListModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <form class="modal-body" id="listForm" autocomplete="off">
+                <input type="hidden" id="editListId" value="">
+                
+                <div class="form-group">
+                    <label for="listName" class="form-label">List Name <span class="required">*</span></label>
+                    <input type="text" id="listName" class="input-premium" placeholder="e.g., Grocery Shopping, Homework" required maxlength="25">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Theme Color</label>
+                    <div class="color-picker-group">
+                        <label class="color-picker-option" style="background-color: #E2E0D8;">
+                            <input type="radio" name="listColor" value="#E2E0D8" checked>
+                            <span class="color-checkmark"></span>
+                        </label>
+                        <label class="color-picker-option" style="background-color: #F2AB27;">
+                            <input type="radio" name="listColor" value="#F2AB27">
+                            <span class="color-checkmark"></span>
+                        </label>
+                        <label class="color-picker-option" style="background-color: #A63242;">
+                            <input type="radio" name="listColor" value="#A63242">
+                            <span class="color-checkmark"></span>
+                        </label>
+                        <label class="color-picker-option" style="background-color: #4b88a2;">
+                            <input type="radio" name="listColor" value="#4b88a2">
+                            <span class="color-checkmark"></span>
+                        </label>
+                        <label class="color-picker-option" style="background-color: #17b890;">
+                            <input type="radio" name="listColor" value="#17b890">
+                            <span class="color-checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="btnCancelListModal">Cancel</button>
+                    <button type="submit" class="btn-primary" id="btnSaveList">Create List</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Help & Shortcuts Modal -->
+        <div class="modal-container help-modal" id="helpModal">
+            <div class="modal-header">
+                <h2 class="modal-title">Keyboard Shortcuts & Help Guide</h2>
+                <button class="btn-icon-close" id="btnCloseHelpModal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            <div class="modal-body text-scroll">
+                <h3>⌨️ Shortcut Bindings</h3>
+                <table class="shortcuts-table">
+                    <thead>
+                        <tr>
+                            <th>Shortcut Key</th>
+                            <th>Action Performed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><kbd>N</kbd></td>
+                            <td>Open New Task Modal Form</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>L</kbd></td>
+                            <td>Open New Custom List Creator Form</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Esc</kbd></td>
+                            <td>Close Any Currently Active Modal Popups</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>Alt</kbd> + <kbd>F</kbd></td>
+                            <td>Focus onto workspace task search input</td>
+                        </tr>
+                        <tr>
+                            <td><kbd>S</kbd></td>
+                            <td>Toggle Audio Synthesizer Engine Sound Effects</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>🌟 Design Philosophy</h3>
+                <p>TaskCraft integrates offline storage so your task data, lists, priorities, checklists, and completion rates are saved right in your browser. Feel the satisfaction of completing tasks with custom-synthesized soundscapes made using the modern HTML5 Web Audio API!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
